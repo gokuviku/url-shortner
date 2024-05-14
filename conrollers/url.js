@@ -15,6 +15,26 @@ async function handleGenerateNewShortURL(req, res) {
     return res.json({ id: shortID });
 }
 
+
+async function handleGetAnalytics(req, res) {
+    const shortId = req.params.shortid;
+    try {
+        const result = await URL.findOne({ shortId });
+        if (!result) {
+            return res.status(404).json({ error: 'URL not found' });
+        }
+        return res.json({
+            totalClicks: result.visitHistory.length,
+            analytics: result.visitHistory
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
 module.exports = {
     handleGenerateNewShortURL,
+    handleGetAnalytics,
 };
